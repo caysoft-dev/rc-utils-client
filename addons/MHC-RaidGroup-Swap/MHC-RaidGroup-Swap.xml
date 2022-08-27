@@ -1,0 +1,465 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+    <FontFamily name="RGSFont" virtual="true">
+        <Member alphabet="roman">
+            <Font font="Fonts\FRIZQT__.TTF" height="10"/>
+        </Member>
+        <Member alphabet="korean">
+            <Font font="Fonts\2002.TTF" height="12" spacing="1"/>
+        </Member>
+        <Member alphabet="simplifiedchinese">
+            <Font font="Fonts\ARKai_T.ttf" height="12"/>
+        </Member>
+        <Member alphabet="traditionalchinese">
+            <Font font="Fonts\bKAI00M.TTF" height="12"/>
+        </Member>
+        <Member alphabet="russian">
+            <Font font="Fonts\FRIZQT___CYR.TTF" height="10"/>
+        </Member>
+    </FontFamily>
+
+    <FontFamily name="RGSSmallFont" virtual="true">
+        <Member alphabet="roman">
+            <Font font="Fonts\FRIZQT__.TTF" height="8"/>
+        </Member>
+        <Member alphabet="korean">
+            <Font font="Fonts\2002.TTF" height="10" spacing="1"/>
+        </Member>
+        <Member alphabet="simplifiedchinese">
+            <Font font="Fonts\ARKai_T.ttf" height="10"/>
+        </Member>
+        <Member alphabet="traditionalchinese">
+            <Font font="Fonts\bKAI00M.TTF" height="10"/>
+        </Member>
+        <Member alphabet="russian">
+            <Font font="Fonts\FRIZQT___CYR.TTF" height="9"/>
+        </Member>
+    </FontFamily>
+
+    <Frame name="RGS">
+        <Scripts>
+            <OnLoad inherit="prepend">
+                self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+                self:RegisterEvent("CHAT_MSG_ADDON")
+                self:RegisterEvent("CHAT_MSG_RAID")
+                self:RegisterEvent("CHAT_MSG_PARTY")
+                self:RegisterEvent("CHAT_MSG_WHISPER")
+                self:RegisterEvent("ADDON_LOADED")
+                self:RegisterEvent("PLAYER_LOGOUT")
+                self:RegisterEvent("GROUP_ROSTER_UPDATE")
+                C_ChatInfo.RegisterAddonMessagePrefix('RGS')
+            </OnLoad>
+            <OnEvent>
+                self:OnEvent(event, ...)
+            </OnEvent>
+            <OnUpdate>
+                local now = time()
+                local lastUpdate = self:getLastUpdate()
+                local diff = now - lastUpdate
+                if (diff > 0) then
+                    self:OnUpdate(diff)
+                    self:setLastUpdate(now)
+                end
+            </OnUpdate>
+        </Scripts>
+    </Frame>
+
+    <Frame name="RGS_RaidFrame_Slot" virtual="true" inherits="BackdropTemplate" frameStrata="BACKGROUND" enableMouse="true" movable="true" resizable="false">
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="BACKDROP_TOOLTIP_16_16_5555" type="global"/>
+            <KeyValue key="backdropBorderColor" value="LEGENDARY_ORANGE_COLOR" type="global"/>
+            <KeyValue key="backdropBorderColorAlpha" value="0.8" type="number"/>
+        </KeyValues>
+        <Size>
+            <AbsDimension x="100" y="30"/>
+        </Size>
+        <Backdrop bgFile="Interface/Buttons/WHITE8X8" edgeFile="Interface/Buttons/WHITE8X8" tile="true">
+            <EdgeSize>
+                <AbsValue val="1"></AbsValue>
+            </EdgeSize>
+            <TileSize>
+                <AbsValue val="16" />
+            </TileSize>
+        </Backdrop>
+        <Scripts>
+            <OnLoad inherit="prepend">
+                self:SetMovable(true)
+                self:SetUserPlaced(false)
+                self:SetBackdropColor(0.2, 0.2, 0.2, 0.5)
+                self:SetBackdropBorderColor(0.2, 0.2, 0.2, 1)
+                self:RegisterForDrag("LeftButton")
+            </OnLoad>
+
+            <OnMouseDown>
+                self:StartMoving()
+            </OnMouseDown>
+            <OnMouseUp>
+                for g=1, #raidGroup do 
+                    for s=1, #raidGroup[g].slots do
+                        local slot = raidGroup[g].slots[s]
+                        if not (self.groupIndex == slot.frame.groupIndex and self.index == slot.index) then
+                            local isOver = MouseIsOver(slot.frame)
+                            if (isOver) then
+                                self:StopMovingOrSizing()
+                                print(slot.player)
+                                if (slot.player == nil) then
+                                    local player = raidGroup[self.groupIndex].slots[self.index].player
+                                    RGS:AddPlayerToGroup(player, raidGroup[slot.frame.groupIndex])
+                                    SetGroup(player.index, slot.frame.groupIndex)
+                                    RGS_RaidFrame:RenderGroups()
+                                else
+                                    RGS_RaidFrame:DoGroupSwap(self, slot.frame)
+                                end
+                                return
+                            end
+                        end
+                    end
+                end
+
+                self:StopMovingOrSizing()
+                RGS_RaidFrame:RenderGroups()
+            </OnMouseUp>
+        </Scripts>
+    </Frame>
+
+    <Frame name="RGS_RaidFrame_Group" virtual="true" inherits="BackdropTemplate" frameStrata="BACKGROUND" enableMouse="true" movable="false" resizable="false">
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="BACKDROP_TOOLTIP_16_16_5555" type="global"/>
+            <KeyValue key="backdropBorderColor" value="LEGENDARY_ORANGE_COLOR" type="global"/>
+            <KeyValue key="backdropBorderColorAlpha" value="0.8" type="number"/>
+        </KeyValues>
+        <Size>
+            <AbsDimension x="100" y="150"/>
+        </Size>
+        <Backdrop bgFile="Interface/Buttons/WHITE8X8" edgeFile="Interface/Buttons/WHITE8X8" tile="true">
+            <EdgeSize>
+                <AbsValue val="1"></AbsValue>
+            </EdgeSize>
+            <TileSize>
+                <AbsValue val="16" />
+            </TileSize>
+        </Backdrop>
+        <Scripts>
+            <OnLoad inherit="prepend">
+                self:SetBackdropColor(0.3, 0.3, 0.3, 0.4)
+                self:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+            </OnLoad>
+        </Scripts>
+    </Frame>
+
+    <Frame name="RGS_RaidFrame_Controller" inherits="BackdropTemplate" parent="UIParent" frameStrata="BACKGROUND" enableMouse="true" movable="true" resizable="false" clampedToScreen="true">
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="BACKDROP_TOOLTIP_16_16_5555" type="global"/>
+            <KeyValue key="backdropBorderColor" value="LEGENDARY_ORANGE_COLOR" type="global"/>
+            <KeyValue key="backdropBorderColorAlpha" value="0.25" type="number"/>
+        </KeyValues>
+        <Size>
+            <AbsDimension x="1" y="30"/>
+        </Size>
+        <Anchors>
+            <Anchor point="CENTER" />
+        </Anchors>
+        <Backdrop bgFile="Interface/Buttons/WHITE8X8" edgeFile="Interface/Buttons/WHITE8X8" tile="true">
+            <EdgeSize>
+                <AbsValue val="1"></AbsValue>
+            </EdgeSize>
+            <TileSize>
+                <AbsValue val="16" />
+            </TileSize>
+        </Backdrop>
+        <Scripts>
+            <OnLoad inherit="prepend">
+                self:SetUserPlaced(true)
+                self:SetBackdropColor(0, 0, 0, 0.4)
+                self:SetBackdropBorderColor(0, 0, 0, 1)
+                self:RegisterForDrag("LeftButton")
+            </OnLoad>
+            <OnDragStart>
+                self:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+                self:StopMovingOrSizing();
+            </OnDragStop>
+        </Scripts>
+        <Frames>
+            <Button name="$parent_CloseButton" inherits="UIPanelCloseButton, BackdropTemplate">
+                <Size>
+                    <AbsDimension x="25" y="25"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-2" y="-4"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        RGS:HideUI()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parent_CollapseButton" inherits="UIPanelScrollUpButtonTemplate">
+                <Size>
+                    <AbsDimension x="17" y="15"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativeTo="$parent_CloseButton" relativePoint="LEFT">
+                        <Offset>
+                            <AbsDimension x="1" y="-12"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            RGS_RaidFrame_Controller:Collapse()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Button name="$parent_ExpandButton" inherits="UIPanelScrollDownButtonTemplate">
+                <Size>
+                    <AbsDimension x="17" y="15"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="RIGHT" relativeTo="$parent_CloseButton" relativePoint="LEFT">
+                        <Offset>
+                            <AbsDimension x="1" y="-12"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                            RGS_RaidFrame_Controller:Expand()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Frame name="$parent_Title" enableMouse="true" movable="true" resizable="true" inherits="BackdropTemplate">
+                <Size>
+                    <AbsDimension x="120" y="20"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="2" y="-4"/>
+                        </Offset>
+                    </Anchor>
+                    <Anchor point="TOPRIGHT" relativeTo="$parent" relativePoint="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-2" y="-4"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Backdrop bgFile="Interface/Buttons/WHITE8X8" edgeFile="Interface/Buttons/WHITE8X8" tile="true">
+                    <EdgeSize>
+                        <AbsValue val="1"></AbsValue>
+                    </EdgeSize>
+                    <TileSize>
+                        <AbsValue val="16" />
+                    </TileSize>
+                </Backdrop>
+                <Scripts>
+                    <OnLoad inherit="prepend">
+                        self:SetBackdropColor(0.5, 0.5, 0.5, 0.3)
+                        self:SetBackdropBorderColor(0, 0, 0, 0)
+                        self:RegisterForDrag("LeftButton")
+                        self:EnableMouse(true)
+                    </OnLoad>
+                    <OnDragStart>
+                        RGS_RaidFrame_Controller:StartMoving()
+                    </OnDragStart>
+                    <OnDragStop>
+                        RGS_RaidFrame_Controller:StopMovingOrSizing();
+                    </OnDragStop>
+                </Scripts>
+                <Layers>
+                    <Layer level="BACKGROUND">
+                        <FontString name="$parent_Text" inherits="ChatFontNormal" text="Group Manager">
+                            <Color r="0.3" g="0.7" b="1"/>
+                            <FontHeight>
+                                <AbsValue val="20"/>
+                            </FontHeight>
+                            <Anchors>
+                                <Anchor point="CENTER" />
+                            </Anchors>
+                        </FontString>
+                    </Layer>
+                </Layers>
+            </Frame>
+        </Frames>
+    </Frame>
+
+    <Frame name="RGS_RaidFrame" inherits="BackdropTemplate" parent="UIParent" frameStrata="BACKGROUND" enableMouse="false" movable="false" resizable="false">
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="BACKDROP_TOOLTIP_16_16_5555" type="global"/>
+            <KeyValue key="backdropBorderColor" value="LEGENDARY_ORANGE_COLOR" type="global"/>
+            <KeyValue key="backdropBorderColorAlpha" value="0.25" type="number"/>
+        </KeyValues>
+        <Size>
+            <AbsDimension x="1" y="1"/>
+        </Size>
+        <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="RGS_RaidFrame_Controller" relativePoint="BOTTOMLEFT" />
+            <Anchor point="TOPRIGHT" relativeTo="RGS_RaidFrame_Controller" relativePoint="TOPRIGHT" />
+        </Anchors>
+        <Backdrop bgFile="Interface/Buttons/WHITE8X8" edgeFile="Interface/Buttons/WHITE8X8" tile="true">
+            <EdgeSize>
+                <AbsValue val="1"></AbsValue>
+            </EdgeSize>
+            <TileSize>
+                <AbsValue val="16" />
+            </TileSize>
+        </Backdrop>
+        <Scripts>
+            <OnLoad inherit="prepend">
+                self:SetBackdropColor(0, 0, 0, 0.4)
+                self:SetBackdropBorderColor(0, 0, 0, 1)
+                self:RegisterForDrag("LeftButton")
+            </OnLoad>
+        </Scripts>
+        <Frames>
+        </Frames>
+    </Frame>
+
+    <Frame name="RGS_RaidFrame_Options" inherits="BackdropTemplate" parent="UIParent" frameStrata="HIGH" enableMouse="true" movable="true" resizable="false">
+        <KeyValues>
+            <KeyValue key="backdropInfo" value="BACKDROP_TOOLTIP_16_16_5555" type="global"/>
+            <KeyValue key="backdropBorderColor" value="LEGENDARY_ORANGE_COLOR" type="global"/>
+            <KeyValue key="backdropBorderColorAlpha" value="0.25" type="number"/>
+        </KeyValues>
+        <Size>
+            <AbsDimension x="200" y="100"/>
+        </Size>
+        <Anchors>
+            <Anchor point="CENTER" />
+        </Anchors>
+        <Backdrop bgFile="Interface/Buttons/WHITE8X8" edgeFile="Interface/Buttons/WHITE8X8" tile="true">
+            <EdgeSize>
+                <AbsValue val="1"></AbsValue>
+            </EdgeSize>
+            <TileSize>
+                <AbsValue val="16" />
+            </TileSize>
+        </Backdrop>
+        <Scripts>
+            <OnLoad inherit="prepend">
+                self:SetUserPlaced(false)
+                self:SetBackdropColor(0, 0, 0, 0.4)
+                self:SetBackdropBorderColor(0, 0, 0, 1)
+                self:RegisterForDrag("LeftButton")
+            </OnLoad>
+            <OnDragStart>
+                self:StartMoving()
+            </OnDragStart>
+            <OnDragStop>
+                self:StopMovingOrSizing();
+            </OnDragStop>
+        </Scripts>
+        <Frames>
+            <Button name="$parent_CloseButton" inherits="UIPanelCloseButton, BackdropTemplate">
+                <Size>
+                    <AbsDimension x="25" y="25"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="TOPRIGHT">
+                        <Offset>
+                            <AbsDimension x="-2" y="-4"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        RGS_RaidFrame_Options:Hide()
+                    </OnClick>
+                </Scripts>
+            </Button>
+
+            <Frame name="ManagerName" inherits="BackdropTemplate" enableMouse="true" movable="true" resizable="false">
+                <KeyValues>
+                    <KeyValue key="backdropInfo" value="BACKDROP_TOOLTIP_16_16_5555" type="global"/>
+                    <KeyValue key="backdropBorderColor" value="LEGENDARY_ORANGE_COLOR" type="global"/>
+                    <KeyValue key="backdropBorderColorAlpha" value="0.25" type="number"/>
+                </KeyValues>
+                <Size x="160" y="24" />
+                <Anchors>
+                    <Anchor point="CENTER" />
+                </Anchors>
+                <Backdrop bgFile="Interface/Buttons/WHITE8X8" edgeFile="Interface/Buttons/WHITE8X8" tile="true">
+                    <EdgeSize>
+                        <AbsValue val="1"></AbsValue>
+                    </EdgeSize>
+                    <TileSize>
+                        <AbsValue val="16" />
+                    </TileSize>
+                </Backdrop>
+                <Scripts>
+                    <OnLoad inherit="prepend">
+                        self:SetBackdropColor(0, 0, 0, 0.2)
+                        self:SetBackdropBorderColor(0, 0, 0, 0.5)
+                    </OnLoad>
+                </Scripts>
+                <Frames>
+                    <EditBox name="$parent_EditBox" letters="14">
+                        <Anchors>
+                            <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+                                <Offset>
+                                    <AbsDimension x="8" y="-3"/>
+                                </Offset>
+                            </Anchor>
+                            <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT">
+                                <Offset>
+                                    <AbsDimension x="-50" y="3"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <FontString inherits="RGSSmallFont">
+                            <Color r="0.3" g="0.7" b="1"/>
+                            <Anchors>
+                                <Anchor point="LEFT" />
+                            </Anchors>
+                        </FontString>
+                        <Scripts>
+                            <OnLoad inherit="prepend">
+                                -- self:SetAllPoints()
+                            </OnLoad>
+                        </Scripts>
+                    </EditBox>
+
+                    <Button name="$parent_SaveButton" inherits="UIPanelButtonGrayTemplate">
+                        <Size>
+                            <AbsDimension x="36" y="16"/>
+                        </Size>
+                        <Anchors>
+                            <Anchor point="TOPRIGHT">
+                                <Offset>
+                                    <AbsDimension x="-4" y="-4"/>
+                                </Offset>
+                            </Anchor>
+                        </Anchors>
+                        <ButtonText inherits="RGSSmallFont" text="save">
+                            <FontHeight>
+                                <AbsValue val="8"/>
+                            </FontHeight>
+                            <Color r="0.8" g="0.8" b="1"/>
+                            <Anchors>
+                                <Anchor point="CENTER" />
+                            </Anchors>
+                        </ButtonText>
+                        <Scripts>
+                            <OnLoad>
+                                local font = self:GetFontString()
+                                font:SetTextHeight(11)
+                            </OnLoad>
+                            <OnClick>
+                                print('SAVE')
+                            </OnClick>
+                        </Scripts>
+                    </Button>
+                </Frames>
+            </Frame>
+        </Frames>
+    </Frame>
+
+    <Script file="MHC-RaidGroup-Swap.lua"/>
+</Ui>
