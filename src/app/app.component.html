@@ -1,0 +1,18 @@
+<mat-toolbar color="primary">
+  <span class="brand">MHC Raid Planner</span>
+  <a mat-button routerLink="/calendar">Calendar</a>
+  <a mat-button routerLink="/players">Players</a>
+  <a mat-button routerLink="/guild">Guild</a>
+  <a mat-button [matMenuTriggerFor]="menu">Tools</a>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item routerLink="/tools/raid-parser">Wowhead Raid Generator</button>
+  </mat-menu>
+  <span class="nav-spacer"></span>
+  <button mat-icon-button routerLink="admin">
+    <mat-icon>settings</mat-icon>
+  </button>
+  <button mat-icon-button routerLink="profile">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+</mat-toolbar>
+<router-outlet></router-outlet>

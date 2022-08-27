@@ -1,0 +1,48 @@
+.form-state-message {
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 0;
+  margin: 8px auto;
+  text-align: center;
+}
+
+.form-state-success {
+  .form-state-border {
+    border: 1px solid #00b828;
+    box-shadow: 0 0 1px #00b828;
+
+    &:focus {
+      outline-color: #009959;
+      box-shadow: none;
+    }
+  }
+
+  .form-state-background {
+    background-color: #a7ffd7;
+  }
+
+  .form-state-text-color {
+    color: #00bd29;
+  }
+}
+.form-state-error {
+  .form-state-border {
+    border: 1px solid #a80e0e;
+    box-shadow: 0 0 1px #a80e0e;
+
+    &:focus {
+      outline-color: #a80e0e;
+      box-shadow: none;
+    }
+  }
+
+  .form-state-background {
+    background-color: #fc8282;
+  }
+
+  .form-state-text-color {
+    color: #9e0101;
+  }
+}

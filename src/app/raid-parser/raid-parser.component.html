@@ -1,0 +1,16 @@
+<div class="container" style="position: relative">
+  <div [ngClass]="{'form-state-success': !!importState.success, 'form-state-error': !!importState.error}" style=" margin: 10px auto;">
+    <h2>Wowhead Raid-Comp Generator</h2>
+
+    <label>
+      Copy & Paste the exported CSV data from your Raid-Helper sign-ups by using the command <span class="command">!print [raid ID]</span>.<br>Take a look at <a target="_blank" href="https://raid-helper.com/commands/">Raid-Helper Commands</a> for detailed information.
+      <textarea class="form-state-border" [(ngModel)]="data" (ngModelChange)="parse($event)" style="display: block; height: 300px; width: 100%; margin-bottom: 15px"></textarea>
+
+      <a *ngIf="url" target="_blank" [href]="url" style="display: inline-block;max-width: 400px;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">{{url}}</a>
+    </label>
+
+    <p *ngIf="!!importState.success || !!importState.error" class="form-state-message form-state-background form-state-border form-state-text-color">
+      {{importState.success || importState.error}}
+    </p>
+  </div>
+</div>

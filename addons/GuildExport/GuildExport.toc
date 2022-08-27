@@ -1,0 +1,10 @@
+## Interface: 11305
+## Title: GuildExport
+## Notes: GuildExport
+## Author: Cayd <Earthshaker>
+## Version: 1.0.0
+## SavedVariablesPerCharacter: guildData
+lib\LibParse\Load.xml
+lib\AceGUI-3.0\AceGUI-3.0.xml
+lib\LibBase64-1.0\lib.xml
+GuildExport.lua

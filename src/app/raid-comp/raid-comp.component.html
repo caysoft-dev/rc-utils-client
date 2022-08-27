@@ -1,0 +1,73 @@
+<div class="container" cdkDropListGroup>
+  <div class="roster">
+    <ng-container *ngFor="let group of groupData; index as i; first as first">
+
+      <div class="group-container">
+        <span style="font-weight: bold">Group {{i+1}}</span>
+        <div class="group">
+          <div class="group-slot" *ngFor="let slotContainer of group" cdkDropList [cdkDropListSortPredicate]="sort" [cdkDropListSortingDisabled]="true" [cdkDropListData]="slotContainer" (cdkDropListDropped)="drop($event)">
+            <div class="player" cdkDrag *ngFor="let player of slotContainer"
+                 [ngClass]="{
+              'class-background_druid': player?.class === 'druid',
+              'class-background_hunter': player?.class === 'hunter',
+              'class-background_mage': player?.class === 'mage',
+              'class-background_paladin': player?.class === 'paladin',
+              'class-background_priest': player?.class === 'priest',
+              'class-background_rogue': player?.class === 'rogue',
+              'class-background_shaman': player?.class === 'shaman',
+              'class-background_warlock': player?.class === 'warlock',
+              'class-background_warrior': player?.class === 'warrior'}">
+              {{player?.name}}
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!first && i%2 !== 0"></div>
+    </ng-container>
+  </div>
+
+  <div class="player-pool">
+    <ng-container *ngFor="let c of classes">
+      <div cdkDropList class="pool" [cdkDropListData]="playerClassMap[c]">
+        <div style="display: inline-block; padding-bottom: 0px">
+          <ng-container *ngFor="let player of playerClassMap[c]">
+            <div cdkDrag style="display: inline-block; margin: 4px 5px; padding: 3px 8px; cursor: move; border: 1px solid;" [ngClass]="{
+              'class-color_druid_darkened': player.class === 'druid',
+              'class-border_druid_darkened': player.class === 'druid',
+              'class-background_druid_lightened': player.class === 'druid',
+              'class-color_hunter_darkened': player.class === 'hunter',
+              'class-border_hunter_darkened': player.class === 'hunter',
+              'class-background_hunter_lightened': player.class === 'hunter',
+              'class-color_mage_darkened': player.class === 'mage',
+              'class-border_mage_darkened': player.class === 'mage',
+              'class-background_mage_lightened': player.class === 'mage',
+              'class-color_paladin_darkened': player.class === 'paladin',
+              'class-border_paladin_darkened': player.class === 'paladin',
+              'class-background_paladin_lightened': player.class === 'paladin',
+              'class-color_priest_darkened': player.class === 'priest',
+              'class-border_priest_darkened': player.class === 'priest',
+              'class-background_priest_lightened': player.class === 'priest',
+              'class-color_rogue_darkened': player.class === 'rogue',
+              'class-border_rogue_darkened': player.class === 'rogue',
+              'class-background_rogue_lightened': player.class === 'rogue',
+              'class-color_shaman_darkened': player.class === 'shaman',
+              'class-border_shaman_darkened': player.class === 'shaman',
+              'class-background_shaman_lightened': player.class === 'shaman',
+              'class-color_warlock_darkened': player.class === 'warlock',
+              'class-border_warlock_darkened': player.class === 'warlock',
+              'class-background_warlock_lightened': player.class === 'warlock',
+              'class-color_warrior_darkened': player.class === 'warrior',
+              'class-border_warrior_darkened': player.class === 'warrior',
+              'class-background_warrior_lightened': player.class === 'warrior'}">
+              {{player.name}}
+              <div *cdkDragPreview class="player">{{ player.name }}</div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <div style="clear: both"></div>
+</div>

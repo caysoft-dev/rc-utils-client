@@ -1,0 +1,59 @@
+$color_class_druid: #FF7C0A;
+$color_class_hunter: #AAD372;
+$color_class_mage: #3FC7EB;
+$color_class_paladin: #F48CBA;
+$color_class_priest: #FFFFFF;
+$color_class_rogue: #FFF468;
+$color_class_shaman: #0070DD;
+$color_class_warlock: #8788EE;
+$color_class_warrior: #C69B6D;
+
+.class-color_druid { color: $color_class_druid; }
+.class-color_hunter { color: $color_class_hunter; }
+.class-color_mage { color: $color_class_mage; }
+.class-color_paladin { color: $color_class_paladin; }
+.class-color_priest { color: $color_class_priest; }
+.class-color_rogue { color: $color_class_rogue; }
+.class-color_shaman { color: $color_class_shaman; }
+.class-color_warlock { color: $color_class_warlock; }
+.class-color_warrior { color: $color_class_warrior; }
+
+.class-background_druid { background-color: $color_class_druid; }
+.class-background_hunter { background-color: $color_class_hunter; }
+.class-background_mage { background-color: $color_class_mage; }
+.class-background_paladin { background-color: $color_class_paladin; }
+.class-background_priest { background-color: $color_class_priest; }
+.class-background_rogue { background-color: $color_class_rogue; }
+.class-background_shaman { background-color: $color_class_shaman; }
+.class-background_warlock { background-color: $color_class_warlock; }
+.class-background_warrior { background-color: $color_class_warrior; }
+
+.class-background_druid_lightened { background-color: lighten($color_class_druid, 20%); }
+.class-background_hunter_lightened { background-color: lighten($color_class_hunter, 20%); }
+.class-background_mage_lightened { background-color: lighten($color_class_mage, 20%); }
+.class-background_paladin_lightened { background-color: lighten($color_class_paladin, 20%); }
+.class-background_priest_lightened { background-color: lighten($color_class_priest, 20%); }
+.class-background_rogue_lightened { background-color: lighten($color_class_rogue, 20%); }
+.class-background_shaman_lightened { background-color: lighten($color_class_shaman, 20%); }
+.class-background_warlock_lightened { background-color: lighten($color_class_warlock, 20%); }
+.class-background_warrior_lightened { background-color: lighten($color_class_warrior, 20%); }
+
+.class-color_druid_darkened { color: darken($color_class_druid, 50%); }
+.class-color_hunter_darkened { color: darken($color_class_hunter, 50%); }
+.class-color_mage_darkened { color: darken($color_class_mage, 50%); }
+.class-color_paladin_darkened { color: darken($color_class_paladin, 50%); }
+.class-color_priest_darkened { color: darken($color_class_priest, 50%); }
+.class-color_rogue_darkened { color: darken($color_class_rogue, 50%); }
+.class-color_shaman_darkened { color: darken($color_class_shaman, 50%); }
+.class-color_warlock_darkened { color: darken($color_class_warlock, 50%); }
+.class-color_warrior_darkened { color: darken($color_class_warrior, 50%); }
+
+.class-border_druid_darkened { border-color: darken($color_class_druid, 50%); }
+.class-border_hunter_darkened { border-color: darken($color_class_hunter, 50%); }
+.class-border_mage_darkened { border-color: darken($color_class_mage, 50%); }
+.class-border_paladin_darkened { border-color: darken($color_class_paladin, 50%); }
+.class-border_priest_darkened { border-color: darken($color_class_priest, 50%); }
+.class-border_rogue_darkened { border-color: darken($color_class_rogue, 50%); }
+.class-border_shaman_darkened { border-color: darken($color_class_shaman, 50%); }
+.class-border_warlock_darkened { border-color: darken($color_class_warlock, 50%); }
+.class-border_warrior_darkened { border-color: darken($color_class_warrior, 50%); }

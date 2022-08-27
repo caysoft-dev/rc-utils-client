@@ -1,0 +1,68 @@
+<div class="container container-transparent">
+  <mat-accordion class="example-headers-align" multi>
+    <mat-expansion-panel expanded>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <strong>Discord Roles</strong>
+        </mat-panel-title>
+        <mat-panel-description>
+          Import and manage roles from your Discord server.
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="row">
+        <div class="col-sm-12" style="display: flex">
+          <p style="line-height: 24px">Click on the button "Update" will pull all roles from you Discord server. This action will reset ALL previous permission settings!</p>
+          <span class="nav-spacer"></span>
+          <button mat-raised-button color="warn" style="height: 24px; line-height: 24px; font-size: 13px" (click)="updateRoles()">Update</button>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-xs-12" style="padding: 20px">
+          <mat-checkbox color="primary" [(ngModel)]="hideHoist">Hide roles without <b>hoist</b> flag</mat-checkbox>
+        </div>
+      </div>
+      <div class="row">
+        <ng-container *ngFor="let role of discordRoles; let i = index">
+          <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" *ngIf="!hideHoist || role.hoist">
+            <mat-card style="margin: 20px;">
+              <mat-card-title>{{role.name}}</mat-card-title>
+              <mat-card-content style="font-size: 11px">
+                <b>Allow user character assignments</b>
+                <ul style="list-style: none; padding: 0; margin: 0">
+                  <li>
+                    <mat-checkbox color="primary" [(ngModel)]="role.settings.characterAssignment.canAssignSelf" (ngModelChange)="onRoleGroupCheckboxChange(i, 'canAssignSelf', 'canAssignEverybody')">self</mat-checkbox>
+                  </li>
+                  <li>
+                    <mat-checkbox color="primary" [(ngModel)]="role.settings.characterAssignment.canAssignEverybody" (ngModelChange)="onRoleGroupCheckboxChange(i, 'canAssignEverybody', 'canAssignSelf')">everyone</mat-checkbox>
+                  </li>
+                </ul>
+
+
+                <b style="display: block; padding-top: 8px">Allow character assignments for ranks</b>
+                <ul style="list-style: none; padding: 0; margin: 0">
+                  <li *ngFor="let rank of guildRanks; let rankIndex = index">
+                    <mat-checkbox color="primary"
+                                  [(ngModel)]="rankMapping[i][rank.index]"
+                                  [disabled]="!role.settings.characterAssignment.canAssignSelf && !role.settings.characterAssignment.canAssignEverybody"
+                                  (ngModelChange)="onRankMapChange(i)">
+                      {{rank.name}}
+                    </mat-checkbox>
+                  </li>
+                </ul>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </ng-container>
+      </div>
+
+
+
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <div style="text-align: right; padding-top: 10px">
+    <button mat-raised-button color="primary" (click)="save()">Save</button>
+  </div>
+</div>
